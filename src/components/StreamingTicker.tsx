@@ -1,6 +1,5 @@
 import {BinanceMiniTicker, TickerData, TickerProps} from "../types";
 import React, {useEffect, useState} from "react";
-import {wsBaseUrl} from "../constants";
 import binanceService from "../services/binanceService";
 
 function toTickerData(binanceMiniTicker: BinanceMiniTicker): TickerData {
@@ -48,7 +47,7 @@ const StreamingTicker: React.FC<TickerProps> = ({ symbol }) => {
                 'StreamingTicker-symbol-price-red-2' : 'StreamingTicker-symbol-price-red')
         }
         setPreviousTickerData(tickerData)
-    }, [tickerData, previousTickerData])
+    }, [tickerData, previousTickerData, tickerClass])
 
     const truncatedPrice: number = tickerData?.price ? Math.trunc(tickerData.price) : 0
 
