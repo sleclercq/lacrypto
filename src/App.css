@@ -36,3 +36,55 @@
     transform: rotate(360deg);
   }
 }
+
+.StreamingTicker-symbol {
+  border: 1px;
+}
+
+.StreamingTicker-symbol-name {
+  border: 1px;
+}
+
+.StreamingTicker-symbol-price {
+  border: 1px;
+}
+
+.StreamingTicker-symbol-price-red {
+  border: 1px;
+  animation: downtick 5s
+}
+
+.StreamingTicker-symbol-price-red-2 {
+  border: 1px;
+  animation: downtick-2 5s
+}
+
+.StreamingTicker-symbol-price-green {
+  border: 1px;
+  animation: uptick 5s
+}
+
+.StreamingTicker-symbol-price-green-2 {
+  border: 1px;
+  animation: uptick-2 5s
+}
+
+@keyframes uptick {
+  from {background-color: green;}
+  to {background-color: white}
+}
+
+@keyframes uptick-2 {
+  from {background-color: green;}
+  to {background-color: white}
+}
+
+@keyframes downtick {
+  from {background-color: red;}
+  to {background-color: white}
+}
+
+@keyframes downtick-2 {
+  from {background-color: red;}
+  to {background-color: white}
+}
