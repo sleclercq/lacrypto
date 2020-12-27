@@ -56,10 +56,12 @@ const StreamingTicker: React.FC<TickerProps> = ({ symbol }) => {
 
     return (
         <table>
+            <tbody>
             <tr className='StreamingTicker-symbol'>
                 <td className='StreamingTicker-symbol-name'>{tickerData?.symbol}</td>
                 <td className={`StreamingTicker-symbol-price ${animationName}`}>{truncatedPrice}</td>
             </tr>
+            </tbody>
         </table>
     )
 
