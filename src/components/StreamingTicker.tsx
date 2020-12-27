@@ -10,7 +10,6 @@ function toTickerData(binanceMiniTicker: BinanceMiniTicker): TickerData {
     return tickerData;
 }
 
-
 const StreamingTicker: React.FC<TickerProps> = ({ symbol }) => {
     const [tickerClass, setTickerClass] = useState<string>('')
     const [animationCount, setAnimationCount] = useState<number>(0)
@@ -21,16 +20,19 @@ const StreamingTicker: React.FC<TickerProps> = ({ symbol }) => {
     useEffect(() => {
         const ws: binanceService | undefined = binanceService.getInstance()
         if (ws) {
+            ws.addSubscriptionStreams([`${symbol.toLowerCase()}@miniTicker`])
             ws.addMessageHook((evt: MessageEvent) => {
                 const binanceStreamData: BinanceStreamData = JSON.parse(evt.data)
                 const binanceMiniTicker: BinanceMiniTicker = binanceStreamData.data
-                setTickerData(toTickerData(binanceMiniTicker))
+                if (binanceMiniTicker.s === symbol) {
+                    setTickerData(toTickerData(binanceMiniTicker))
+                }
             })
         }
         return () => {
             ws?.removeMessageHooks()
         }
-    }, [])
+    }, [symbol])
 
     useEffect(() => {
         if (!tickerData) {
@@ -51,18 +53,13 @@ const StreamingTicker: React.FC<TickerProps> = ({ symbol }) => {
         setPreviousTickerData(tickerData)
     }, [tickerData, previousTickerData, tickerClass])
 
-    const truncatedPrice: number = tickerData?.price ? Math.trunc(tickerData.price) : 0
     const animationName = tickerClass === '' ? '' : `${tickerClass}-${animationCount}`
 
     return (
-        <table>
-            <tbody>
-            <tr className='StreamingTicker-symbol'>
-                <td className='StreamingTicker-symbol-name'>{tickerData?.symbol}</td>
-                <td className={`StreamingTicker-symbol-price ${animationName}`}>{truncatedPrice}</td>
-            </tr>
-            </tbody>
-        </table>
+        <div className='StreamingTicker-symbol'>
+            <div className='StreamingTicker-symbol-name'>{tickerData?.symbol}</div>
+            <div className={`StreamingTicker-symbol-price ${animationName}`}>{tickerData?.price || '0'}</div>
+        </div>
     )
 
 }

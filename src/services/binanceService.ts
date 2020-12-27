@@ -6,6 +6,11 @@ interface Message {
     id: number
 }
 
+enum ConnectionStatus {
+    DISCONNECTED,
+    CONNECTED
+}
+
 export const DebugMessageHook = (evt: MessageEvent) => {
     console.log(evt)
 }
@@ -22,25 +27,17 @@ export default class binanceService {
         return this.myInstance
     }
 
-    private myMessage: Message = {
-        method: "SUBSCRIBE",
-        params: [
-            "btcusdt@miniTicker"
-        ],
-        id: 1
-    }
-
     private _ws: WebSocket;
     private messageHooks: { (evt: MessageEvent): void; }[] = [];
+    private subscriptions: string[] = []
+    private connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED
 
     constructor() {
         this._ws = new WebSocket(`${wsBaseUrl}`)
 
         this._ws.onopen = () => {
-            // on connecting, do nothing but log it to the console
             console.log('connnected')
-            this._ws.send(JSON.stringify(this.myMessage))
-            console.log("sent")
+            this.connectionStatus = ConnectionStatus.CONNECTED
         }
 
         this._ws.onmessage = (evt: MessageEvent) => {
@@ -55,8 +52,27 @@ export default class binanceService {
 
         this._ws.onclose = () => {
             console.log('disconnected')
-            // automatically try to reconnect on connection loss
+            this.connectionStatus = ConnectionStatus.DISCONNECTED
         }
+    }
+
+    isConnected() {
+        return this.connectionStatus === ConnectionStatus.CONNECTED
+    }
+
+
+    addSubscriptionStreams(streams: string[]) {
+        const subscriptionParam: string[] = streams.filter(s => !this.subscriptions.includes(s))
+        if (subscriptionParam.length === 0) {
+            return
+        }
+        const subscriptionMessage: Message = {
+            method: "SUBSCRIBE",
+            params: subscriptionParam,
+            id: 1
+        }
+        this._ws.send(JSON.stringify(subscriptionMessage))
+        this.subscriptions = this.subscriptions.concat(subscriptionParam)
     }
 
     addMessageHook(hook: { (evt:MessageEvent): void} ) {
