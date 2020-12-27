@@ -1,4 +1,4 @@
-import { BinanceMiniTicker, TickerData, TickerProps } from "../types";
+import {BinanceMiniTicker, BinanceStreamData, TickerData, TickerProps} from "../types";
 import React, { useEffect, useState } from "react";
 import binanceService from "../services/binanceService";
 
@@ -7,7 +7,7 @@ function toTickerData(binanceMiniTicker: BinanceMiniTicker): TickerData {
         symbol: binanceMiniTicker.s,
         price: binanceMiniTicker.c
     }
-    return tickerData
+    return tickerData;
 }
 
 
@@ -22,7 +22,8 @@ const StreamingTicker: React.FC<TickerProps> = ({ symbol }) => {
         const ws: binanceService | undefined = binanceService.getInstance()
         if (ws) {
             ws.addMessageHook((evt: MessageEvent) => {
-                const binanceMiniTicker: BinanceMiniTicker = JSON.parse(evt.data)
+                const binanceStreamData: BinanceStreamData = JSON.parse(evt.data)
+                const binanceMiniTicker: BinanceMiniTicker = binanceStreamData.data
                 setTickerData(toTickerData(binanceMiniTicker))
             })
         }

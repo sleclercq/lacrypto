@@ -1,3 +1,8 @@
+export interface BinanceStreamData {
+    stream: string,
+    data: BinanceMiniTicker
+}
+
 export interface BinanceMiniTicker {
     "e": string,          // Event type
     "E": number,          // Event time
