@@ -5,6 +5,12 @@ interface Message {
     params: Array<string>,
     id: number
 }
+
+export const DebugMessageHook = (evt: MessageEvent) => {
+    console.log(evt)
+}
+
+
 export default class binanceService {
 
     static myInstance: binanceService | undefined = undefined
@@ -38,6 +44,12 @@ export default class binanceService {
         }
 
         this._ws.onmessage = (evt: MessageEvent) => {
+            // might be simpler down the line to parse evt.data here, but first
+            //  we have to be sure to parse evt.data into the correct type
+            if ('id' in JSON.parse(evt.data)) {
+                console.log(`Service message ${evt.data}`)
+                return
+            }
             this.messageHooks.forEach(hook => hook(evt))
         }
 
